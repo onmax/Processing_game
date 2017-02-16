@@ -185,30 +185,21 @@ void mousePressed() {
     // go back to the first scene
     currentScene = 0;
   }
-}
-  
-    void keyReleased(){
-    //ARROWS
-     if(keyCode==38){em-=15;}//up
-     if(keyCode==40){em+=15;}//down
-     if(keyCode==37){en-=15;}//left
-     if(keyCode==39){en+=15;}//right
-     
-     
-     //AWSD
-     if(keyPressed == true && keyCode==87){em-=15;}//up
-     if(keyCode==83){em+=15;}//down
-     if(keyCode==65){en-=15;}//left
-     if(keyCode==68){en+=15;}//right
-     
-       
-    }
-    
+}    
+
+//Move th ball
     void keyPressed(){
-        if(keyPressed == true && keyCode==87){em-=15;}//up
-         if(keyCode==83){em+=15;}//down
-     if(keyCode==65){en-=15;}//left
-     if(keyCode==68){en+=15;}//right
+      //ARROWS
+       if(keyCode==38){em-=15;}//up
+       if(keyCode==40){em+=15;}//down
+       if(keyCode==37){en-=15;}//left
+       if(keyCode==39){en+=15;}//right
+     
+      //AWSD
+       if(keyCode==87){em-=15;}//up
+       if(keyCode==83){em+=15;}//down
+       if(keyCode==65){en-=15;}//left
+       if(keyCode==68){en+=15;}//righ
     
     }
     
