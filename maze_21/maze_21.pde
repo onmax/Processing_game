@@ -8,16 +8,28 @@ int em;
 float rn;
 float rm;
 //beast
-float bm;
-float bn;
+int bm;
+int bn;
+float whatX;
+float whatY;
+//guard
+int gx;
+int gy;
 
-int lastX;
-int lastY;
-
+int lasten;
+int lastem;
+//coins
+int cx;
+int cy;
 
 //color
-color bc=color(0,1,2);
+color bc=color(0,0,0);
+color ab=color(0,0,0);
+color gc=color(0,0,0);
+color cc=color(0,0,0);
+
 boolean hit;
+boolean acatch;
 boolean galleryMode;
 boolean wall;
 int nextTimeToUpdateGallery;
@@ -26,13 +38,29 @@ boolean firstDrawScene1;
 boolean firstDrawScene2;
 
 
-void Bola( float em, float en){
+void Bola(){
   ellipseMode (RADIUS);
   fill(75, 252, 0);
   ellipse(en,em, rn, rm);
 }
 
-//void beast
+void Beast(){
+ellipseMode (RADIUS);
+fill(255,5,9);
+ellipse (bn,bm,10,10);
+
+}
+
+void Guard(){
+  fill(250,238,8);
+ ellipse (gx,gy, 9,9);
+}
+
+void coin(){
+  fill(255,177,8);
+ ellipse (cx,cy,6,6);
+}
+
 
 void drawGalleryModeCountdown() {
   if (galleryMode) {
@@ -40,70 +68,6 @@ void drawGalleryModeCountdown() {
     int timeUntilGalleryUpdate = (nextTimeToUpdateGallery - currentTime) / 1000;
     text("0:0"+timeUntilGalleryUpdate, 710, 25);
   }
-}
-
-//void map1(){
-// line(20,30,20,450);
-// line(20,30,700,30);
-// line(20,500,700,500);
-// line(700,500,700,20);
-// line(20,450,300,450);
-// line(300,450,300,300);
-// line(350,450,650,450);
-// line(350,450,350,200);
-// line(300,300,150,300);
-// line(150,300,150,100);
-// line(75,100,75,350);
-// line(80,400,200,400);
-// line(200,400,200,350);
-// line(200,250,300,250);
-// line(650,450,650,250);
-// line(650,250,600,250);
-// line(550,250,400,250);
-// line(500,250,500,400);
-// line(600,300,600,400);
-// line(550,400,400,400);
-// line(425,300,425,350);
-// line(550,200,550,150);
-// line(550,150,700,150);
-// line(600,150,600,80);
-// line(550,30,550,100);
-// line(450,150,350,150);
-// line(450,150,450,80);
-// line(450,80,400,80);
-// line(350,100,250,100);
-// line(350,100,350,80);
-// line(250,100,250,80);
-//}
-  
-  
- 
-  
-void map2(){
-  ////line(20,50,20,200);
- ////ine(20,50,700,50);
- ////ine(20,500,700,500);
- ////ine(700,500,700,50);
- ///ine(20,300,20,500);
- ////ine(120,150,120,400);
- ////ine(120,150,250,150);
- ////ine(120,400,250,400);
- ////ine(200,200,400,200);
- ////ine(200,350,400,350);
- ////ine(500,120,500,225);
- ////ine(500,275,500,400);
- ////ine(500,120,350,120);
- ////ine(500,400,350,400);
- ////ine(600,90,600,130);
- ////ine(600,130,650,130);
- ////ine(600,450,600,380);
- ////ine(600,380,650,380);
-////ine(630,170,630,235);
- ////ine(630,340,630,265);
-
- 
- 
-  
 }
 
 
@@ -118,7 +82,11 @@ void setup() {
   // set background to black
   background(0, 0, 0);
    
-  frameRate(60);
+  frameRate(200);
+  
+  
+  whatX=0;
+  whatY=0;
   // game always starts at Scene 0 (the intro scene)
   currentScene = 0;
   // there are only 4 scenes so far!
@@ -128,9 +96,16 @@ void setup() {
  nextTimeToUpdateGallery= 0;
  
  hit=false;
+ acatch=false;
   
   firstDrawScene1 = true;
   firstDrawScene2 = true;
+  
+     bn=250;
+    bm=160;   
+
+  cx = 80 + (int)random(400);
+  cy = 150+ (int)random(300);
 }
 
 void drawIntroScene() {
@@ -178,8 +153,13 @@ void drawIntroScene() {
   // Draw game instructions
   textSize(30);
   text("Press mouse to continue", 200, 150);
-  
+  en=50;
+  em=470;
   drawGalleryModeCountdown();
+  
+  if (mousePressed) {
+    currentScene = 1;
+  }
 }
 
 void drawScene1() {
@@ -191,12 +171,10 @@ void drawScene1() {
     em=470;   
     firstDrawScene1 = false;
   }
+ 
+   
   
 
-
-//  en=20;
-//  em=470;
-  
   
   // white background
   background(255, 255, 255);
@@ -235,30 +213,140 @@ void drawScene1() {
   // This is where YOU can draw the art for your Game Scene
   
   // YOUR CODE HERE
+ if (keyPressed && keyCode==38 ) { //up
+      hit = isHit(get(en,em-10)) || isHit(get(en-7,em-7)) || isHit(get(en+7,em-7));
+      if (!hit) {
+        // move
+        em-=3;
+      } else {
+        // don't move
+        hit = false;
+      }
+  }
+  if (keyPressed &&  keyCode==40) { //down
+      hit = isHit(get(en,em+10)) || isHit(get(en+7,em+7)) || isHit(get(en+7,em+7));
+      if (!hit) {
+        // move
+        em+=3;
+      } else {
+        // don't move
+        hit = false;
+      }
+  }
+  if (keyPressed && keyCode==37) { //left
+      hit = isHit(get(en-10,em)) || isHit(get(en-7,em-7)) || isHit(get(en-7,em-7));
+      if (!hit) {
+        // move
+        en-=3;
+      } else {
+        // don't move
+        hit = false;
+      }
+  }
+  if (keyPressed && keyCode==39) { //rihgt
+      hit = isHit(get(en+10,em)) || isHit(get(en+7,em-7)) || isHit(get(en+7,em-7));
+      if (!hit) {
+        // move
+        en+=3;
+      } else {
+        // don't move
+        hit = false;
+      }
+     
+  }  //<>//
+  
+  if (bn>en && !isHit(get(bn,bm+10))) {
+    bn=bn-1;
+  }
+  
+  
+  if ( bn>en &&!isHit(get(bn,bm-10)) ){
+}else{
+  bn=bn+1;
+
+}
+  
+  if ( bm<em && !isHit(get(bn,bm+10))){
+}else{
+  bm=bm-1;
+
+}
+
+if (bm>em && !isHit(get(bn,bm-10))){
+}else{
+  bm=bm+1;
+
+}
+  
+  
+  
+
+  
+       
  strokeWeight(0);
  
    //Title
     textSize(32);
     fill(0, 0, 0);
-    text("Kill the beast", 50, 30); 
+    text("scape from  the beast", 50, 30); 
     // Draw game instructions
     //text("Press mouse to continue", 200, 150);
     
     
     
    
-      Bola( em, en);
-      
+      Bola( );
+      Beast();
+      coin();
       
       drawGalleryModeCountdown();
-   }
+      
+      if (cc(get( en+5,em))){
+        text("1" ,50,550);
+      }
+        
+        if (cc(get( en-5,em))){
+           text("1" ,50,550);
+        }
+           
+      if (cc(get( en,em+5))){
+     text("1" ,50,550);
+      }
+     if(cc(get( en,em-5))){
+       text("1" ,50,550);
+     }
+     
+    if(bcatch(get( en+5,em))){
+      print("yeah 1");
+      currentScene = 2;
+    }
+     if(bcatch(get( en-5,em))){
+      print("yeah 2");
+       currentScene = 2;
+
+    }
+     if(bcatch(get( en,em+5))){
+      print("yeah 3");
+      currentScene = 2;
+    }
+     if(bcatch(get( en,em-5))){
+      print("yeah 4");
+       currentScene = 2;
+    }
+
+ }
+
 
 void drawScene2() {
   rn=10;
   rm=10;
   if (firstDrawScene2) {
-    em=250;
-    en=20;
+    em=280;
+    en=200;
+    
+    gx=500;
+    gy=260;
+    
     firstDrawScene2 = false;
   }
   // red background
@@ -292,14 +380,110 @@ line(20,50,20,200);
 
      textSize(32);
     fill(0, 0, 0);
-    text("rescue the princes", 50, 30); 
+    text("The beast caught you, scape", 50, 30); 
     textSize(20);
     fill(0,0,0);
     //text("becarefull with the guards",50,580);
-  // Draw game instructions
-  
+  // Draw game instructions  hit = isHit(get(en,em-10));
+       if (keyPressed && keyCode==38 ) { //up
+      hit = isHit(get(en,em-10)) || isHit(get(en-10,em-10)) || isHit(get(en+10,em-10));
+      if (!hit) {
+        // move
+        em-=2;
+      } else {
+        // don't move
+        hit = false;
+      }
+  }
+  if (keyPressed &&  keyCode==40) { //down
+      hit = isHit(get(en,em+10)) || isHit(get(en-10,em+10)) || isHit(get(en+10,em+10));
+      if (!hit) {
+        // move
+        em+=2;
+      } else {
+        // don't move
+        hit = false;
+      }
+  }
+  if (keyPressed && keyCode==37) { //left
+      hit = isHit(get(en-10,em)) || isHit(get(en-10,em-10)) || isHit(get(en-10,em-10));
+      if (!hit) {
+        // move
+        en-=2;
+      } else {
+        // don't move
+        hit = false;
+      }
+  }
+  if (keyPressed && keyCode==39) { //rihgt
+      hit = isHit(get(en+10,em)) || isHit(get(en+10,em-10)) || isHit(get(en+10,em-10));
+      if (!hit) {
+        // move
+        en+=2;
+      } else {
+        // don't move
+        hit = false;
+      }
+  }
+      if(gp(get( en+5,em))){
+      print("yeah 1");
+
+    }
+     if(gp(get( en-5,em))){
+      print("yeah 2");
+     
+
+    }
+     if(gp(get( en,em+5))){
+      print("yeah 3");
    
-     Bola( em, en);
+    }
+     if(gp(get( en,em-5))){
+      print("yeah 4");
+       
+    }
+  
+  
+    if (gx<en && !isHit(get(gx,gy+10))) {
+    }else{
+    gx=gx-1;
+  }
+  
+  
+  if ( gx>en &&!isHit(get(gx,gy-10)) ){
+}else{
+  gx=gx+1;
+
+}
+  
+  if ( gy<em && !isHit(get(gx+10,gy))){
+}else{
+  gy=gy-1;
+
+}
+
+if (gy>em && !isHit(get(gx-10,gy))){
+}else{
+  gy=gy+1;
+}  
+
+acatch= bcatch(get(bn,bm)); 
+
+  if(gx==en-7 && gx==en+7){
+    gx=500;
+    gy=260;
+    en = 20;
+    em = 270;
+  }
+
+if(en<19){
+   currentScene = 3;
+}
+   
+Guard();
+     Bola( );
+     
+     
  drawGalleryModeCountdown();
    
 }
@@ -309,13 +493,17 @@ void drawFinalScene() {
   background(0, 0, 0);
   // Draw game title
   textSize(80);
-  fill(250, 8, 8);
-  text("YOU'RE DEAD", 100, 300); 
+  fill(212,95,66);
+  text("YOU SCPAED", 100, 300); 
   // Draw game instructions
   textSize(25);
   fill(255,255,255);
   text("Press mouse to play again", 200, 150);
   drawGalleryModeCountdown();
+  
+  if(mousePressed){
+     currentScene = 1;
+   }
 }
 
 void draw() {
@@ -361,81 +549,76 @@ boolean advanceScene() {
      
 }
 
-void mousePressed() {
-   if (currentScene < maxScenes - 1) {
-    // go to next scene
-    currentScene++;
-  } else {
-    // go back to the first scene
-    currentScene = 0;
-  }
 
-  
-  
-}
-  
 
 boolean isHit(color bc){
-       float bcRed = red(bc);
-       float bcBlue = blue(bc);
-       float bcGreen = green(bc);
-       print("\nPoints:",em,",",en);
+    float bcRed = red(bc);
+    float bcBlue = blue(bc);
+    float bcGreen = green(bc);
+      
        
-        print("\nbc=",bc); 
-        print("\nbred=",bcRed);
-        print("\nbblue=",bcBlue);
-        print("\ngreen=",bcGreen);
+            if( bcRed == 0 && bcBlue == 0 && bcGreen == 0) { 
         
-      if( bcRed == 0 && bcBlue == 0 && bcGreen == 0) { 
-          print("bounce");
-          println(bc);  
-          return true;
+         return true;
 
-         }
-       else{
-         return false;
+        }
+      else{
+  return false;
+         
        }
-  
+        
 }
+         
+boolean bcatch (color ab){
+    float abRed = red(ab);
+    float abBlue = blue(ab);
+    float abGreen = green(ab);
+
+               
+          if( abRed == 255 && abBlue == 9 && abGreen == 5) { 
+  return true;
+      
+         }else{
+
+        return false;
+         }
+   }
+   
+   boolean gp (color gc){
+    float gcRed = red(gc);
+    float gcBlue = blue(gc);
+    float gcGreen = green(gc);
+
+               
+          if( gcRed == 250 && gcBlue == 238 && gcGreen == 8) { 
+  return true;
+      
+         }else{
+
+        return false;
+         }
+   }
+         
+   boolean cc (color cc){
+    float ccRed = red(cc);
+    float ccBlue = blue(cc);
+    float ccGreen = green(cc);
+
+               
+          if( ccRed == 255 && ccBlue == 177 && ccGreen == 8) { 
+  return true;
+      
+         }else{
+
+        return false;
+         }
+   }
+   
+   
+ //     
 
     void keyPressed(){
-      
-      hit = isHit(get(en,em-10));
-       if (!hit) {
-         hit = isHit(get(en-10,em));
-       }
-       if (!hit) {
-       hit = isHit(get(en-10,em));
-       }
-   if (!hit) {
-       hit = isHit(get(en-10,em));
-       }
-       
-    
- 
-    if (!hit) {
-  //ARROWS
-       if(keyCode==38){em-=5;}//up
-       if(keyCode==40){em+=5;}//down
-       if(keyCode==37){en-=5;}//left
-       if(keyCode==39){en+=5;}//righ
-      //AWSD
-       if(keyCode==87){em-=5;}//up
-       if(keyCode==83){em+=5;}//down
-       if(keyCode==65){en-=5;}//left
-       if(keyCode==68){en+=5;}//righ
-       
-       //if( em< -465){
-       //    em=114;}
-       //if (en < -10) {
-       //    en=700;}
-    }else{
-    en=20;
-    em=470;   
-      hit=false;
-    }
-     //<>// //<>// //<>//
-         
+          //<>// //<>//
          
          
       
